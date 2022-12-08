@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
   }
+  // cool
 
   /** This function is called periodically during autonomous. */
   @Override
