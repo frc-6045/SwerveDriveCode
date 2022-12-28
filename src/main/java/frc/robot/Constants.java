@@ -35,9 +35,9 @@ public final class Constants
     
     public static final class DriveConstants {
 
-        public static final double kTrackWidth = Units.inchesToMeters(20);
+        public static final double kTrackWidth = Units.inchesToMeters(28);
         // Distance between right and left wheels
-        public static final double kWheelBase = Units.inchesToMeters(20);
+        public static final double kWheelBase = Units.inchesToMeters(28);
         // Distance between front and back wheels
         //This last part will create a model for WPI to make calculations off of
         public static final SwerveDriveKinematics kDriveKinematics = new SwerveDriveKinematics(
@@ -89,6 +89,10 @@ public final class Constants
                 kPhysicalMaxAngularSpeedRadiansPerSecond / 4;
         public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
+        public static final double ksVolts = 0.20322;
+        public static final double kvVoltSecondsPerMeter = 3.2976;
+        public static final double kaVoltSecondsSquaredPerMeter = 0.67542;
+        public static final double kPDriveVel = 4.569;
     }
 
     public static final class AutoConstants {
@@ -105,7 +109,12 @@ public final class Constants
                 new TrapezoidProfile.Constraints(
                         kMaxAngularSpeedRadiansPerSecond,
                         kMaxAngularAccelerationRadiansPerSecondSquared);
+
+        public static final double kRamseteB = 2;
+        public static final double kRamseteZeta = 0.7;
     }
+
+
 
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;

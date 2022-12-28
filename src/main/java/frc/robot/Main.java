@@ -2,6 +2,8 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+//using code from team 2059 path planning, FRC 0 to autonomous swerve drive, may or may not get some from moexx99/brandon moe jump start, 
+//TODO: look up how to use network tables. 
 package frc.robot;
 
 import edu.wpi.first.wpilibj.RobotBase;

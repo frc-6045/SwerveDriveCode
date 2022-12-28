@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.MecanumDriveWheelSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,9 +51,9 @@ public class SwerveSubsystem extends SubsystemBase
         Constants.DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
     
     //this requires another library but I dont know if we are using this gyro or not
-    // private AHRS gyro = new AHRS(Spi.port.kMXP);
     // so we will use the old one that i know we have
     private ADIS16470_IMU gyro = new ADIS16470_IMU();
+    private final SwerveDriveOdometry m_Odometry = new SwerveDriveOdometry(DriveConstants.kDriveKinematics, new Rotation2d(0));
 
     public SwerveSubsystem()
     {
@@ -64,16 +67,25 @@ public class SwerveSubsystem extends SubsystemBase
             try 
             {
                 Thread.sleep(1000);
+                zeroHeading();
             } catch (Exception e)
             {
-                zeroHeading();
             };
         }).start();
+    // maybe think about using this? I dont know if its needed. one guy didn't use it while the other had it here. we will see
+    /*
+       m_Odometry.resetPosition(new Pose2d(), getRotation2d());
+    */
     }
 
     public void zeroHeading() 
     {
         gyro.reset();
+    }
+
+    public ADIS16470_IMU getGyro()
+    {
+        return gyro;
     }
 
     public double getHeading()
@@ -83,17 +95,45 @@ public class SwerveSubsystem extends SubsystemBase
         //found this method
         return Math.IEEEremainder(gyro.getAngle(), 360);
     }
-    // other methods like to be able to get the rotation in 2 dimensions which is equivalent to placing the value along a sine curve. 
+
+    // other methods like to be able to get the rotation in 2 dimensions which is equivalent to placing the value along a sin curve. 
     //Ask if you would like this to be elaborted on
     public Rotation2d getRotation2d() 
     {
         return Rotation2d.fromDegrees(getHeading());
     }
 
-    @Override
-    public void periodic()
+    public SwerveModuleState[] getModuleStates()
     {
-        SmartDashboard.putNumber("Robot Heading", getHeading());
+     SwerveModuleState[] swerveArray = {
+        frontLeft.getState(), 
+        frontRight.getState(), 
+        backLeft.getState(), 
+        backRight.getState()
+        };
+    
+    return swerveArray;
+    }
+
+    //probably is not needed but I have it in here in case I do any experimenting or something
+    public double getAverageDistanceMeters()
+    {
+        return (frontLeft.getDrivePosition() + 
+        frontRight.getDrivePosition() + 
+        backLeft.getDrivePosition() + 
+        backRight.getDrivePosition()
+        ) / 4;
+    }
+
+    //maybe needs to be positive? in the video I was watching it was negative 
+    public double getTurnRate()
+    {
+        return -gyro.getRate();
+    }
+
+    public Pose2d getPose()
+    {
+        return m_Odometry.getPoseMeters();
     }
 
     public void stopModules()
@@ -116,4 +156,33 @@ public class SwerveSubsystem extends SubsystemBase
         backLeft.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     }
+
+
+    // probably is not needed but I have it in here in case I do any experimenting or something
+    public void resetEncoders()
+    {
+        frontLeft.resetEncoders();
+        frontRight.resetEncoders();
+        backRight.resetEncoders();
+        backLeft.resetEncoders();
+    }
+
+    public void resetOdometry()
+    {
+        //don't know if I need to reset my encoders or not, we will leave them in here for now
+        /*
+        resetEncoders();
+        */
+        m_Odometry.resetPosition(new Pose2d(), getRotation2d());
+    }
+
+    @Override
+    public void periodic()
+    {
+        m_Odometry.update(getRotation2d(), getModuleStates());
+        SmartDashboard.putNumber("Robot Heading", getHeading());
+        SmartDashboard.putNumber("average distance traveled in Meters", getAverageDistanceMeters());
+        SmartDashboard.putString("Robot Location", getPose().getTranslation().toString());
+    }
+
 }
