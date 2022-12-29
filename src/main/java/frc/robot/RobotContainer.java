@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
@@ -47,7 +48,7 @@ public class RobotContainer {
 
     private final XboxController driverJoystick = new XboxController(OIConstants.kDriverControllerPort);
 
-    SendableChooser<Command> chooser = new SendableChooser<>();
+    SendableChooser<Command> autoChooser = new SendableChooser<>();
 
 
 
@@ -65,12 +66,55 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    //maybe reformat this to do what brandon moe did? instead create an array with each of the files here that stores all of the paths.
-    chooser.addOption("Curvy path", loadPathPlannerTrajectory("src/main/deploy/pathplanner/generatedJSON/Curvy Path.wpilib.json", true));
-    chooser.addOption("Straight Path", loadPathPlannerTrajectory("src/main/deploy/pathplanner/generatedJSON/Straight Path.wpilib.json", true));
 
-    Shuffleboard.getTab("Autonomous").add(chooser);
+
+
+
+    //maybe reformat this to do what brandon moe did? instead create an array with each of the files here that stores all of the paths.
+/* 
+    autoChooser.addOption("Curvy path", loadPathPlannerTrajectory("src/main/deploy/pathplanner/generatedJSON/Curvy Path.wpilib.json", true));
+    autoChooser.addOption("Straight Path", loadPathPlannerTrajectory("src/main/deploy/pathplanner/generatedJSON/Straight Path.wpilib.json", true));
+*/
+
+
+
+
+
+    try 
+    {
+      // Create a file object
+      File f = new File("./src/main/deploy/pathplanner");
+
+      // Get all the names of the files present
+      // in the given directory
+      File[] files = f.listFiles();
+      System.out.println("Files are:");
+      // Display the names of the files
+      for (int i = 0; i < files.length; i++) 
+      {
+        String file_name = files[i].getName();
+        String file_extention = file_name.substring(file_name.length() - 5, file_name.length());
+        String path_name = file_name.substring(0, file_name.length() - 5);
+        String auto_name = file_name;
+        if (file_extention.equals(".path"))
+        {
+
+          //might have to change the file name to auto name and just throw in a substring method to get the actual name of the path.
+          autoChooser.addOption(file_name, loadPathPlannerTrajectory(path_name, true));
+
+        }
+      }
+    }
+    catch (Exception e) 
+    {
+      System.err.println(e.getMessage());
+    }
+    Shuffleboard.getTab("Autonomous").add(autoChooser);
   }
+
+
+
+
 
   public Command loadPathPlannerTrajectory(String filename, boolean resetOdometry)
   {
@@ -130,6 +174,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() 
   {
-    return chooser.getSelected();
+    return autoChooser.getSelected();
   }
 }
