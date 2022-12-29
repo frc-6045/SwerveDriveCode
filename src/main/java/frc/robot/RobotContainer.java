@@ -66,8 +66,8 @@ public class RobotContainer {
     configureButtonBindings();
 
     //maybe reformat this to do what brandon moe did? instead create an array with each of the files here that stores all of the paths.
-    chooser.addOption("Curvy path", loadPathPlannerTrajectory("C:/Users/sabre robotics/Desktop/SwerveDriveCode/src/main/deploy/pathplanner/generatedJSON/Curvy Path.wpilib.json", true));
-    chooser.addOption("Straight Path", loadPathPlannerTrajectory("C:/Users/sabre robotics/Desktop/SwerveDriveCode/src/main/deploy/pathplanner/generatedJSON/Straight Path.wpilib.json", true));
+    chooser.addOption("Curvy path", loadPathPlannerTrajectory("src/main/deploy/pathplanner/generatedJSON/Curvy Path.wpilib.json", true));
+    chooser.addOption("Straight Path", loadPathPlannerTrajectory("src/main/deploy/pathplanner/generatedJSON/Straight Path.wpilib.json", true));
 
     Shuffleboard.getTab("Autonomous").add(chooser);
   }
